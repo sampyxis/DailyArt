@@ -21,14 +21,18 @@ boolean drawCurves = false;
 boolean smCurves = false;
 boolean smLines = false;
 boolean showTint = false;
+int loopNumLine = 0;
+int numOppLine = 100;
+
 
 void setup(){
-  textsize(32);
-  img = loadImage("newImage/newImage.jpg");
+  //textsize(32);
+  img = loadImage("../newImage/newImage.jpg");
   size(img.width, img.height);
   x = width/2;
   y = height/2;
   dailyRandom();  
+  image(img,0,0);
 }
 
 void draw(){
@@ -38,8 +42,8 @@ void draw(){
   noFill();
   
   // Draw the original window
-  imageFrame.draw();
-  
+//  imageFrame.draw();
+
 
   int pixelIndex = ( x+ (y*img.width ));
   color c = img.pixels[pixelIndex];
@@ -80,9 +84,14 @@ void draw(){
       drawCurves();
     }
   }
-  
+
+drawLines();
+drawSmallLines();
+drawCurves();
+
   // change the size
   pointCount = (int)random(1,5);
+
 }
 
 void drawSmallLines(){

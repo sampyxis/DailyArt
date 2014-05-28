@@ -6,8 +6,7 @@
 '''
  
 # http://www.flickr.com/services/api/flickr.photos.search.html
-api_key =  '22b38b315def19e4aa077020eb33cbc6'
-api_secret = 'ec2c4f409b7332dd'
+
 
  
 import flickrapi
@@ -27,4 +26,11 @@ def url_for_photo(p):
     
  
 flickr = flickrapi.FlickrAPI(api_key, api_secret)
-print url_for_photo(random.choice(flickr.photos_search(tags=sys.argv[0], per_page=20)[0]))
+#(token, frob) = flickr.get_token_part_one(perms='write')
+#flickr.get_token_part_two((token, frob))
+
+#print flickr.photos_search( api_key = api_key, tages = 'Land')
+#print url_for_photo(random.choice(flickr.photos_search(tags=sys.argv[0], per_page=20)[0]))
+print url_for_photo(random.choice(flickr.photos_search(tags='Land', per_page=2)[0]))
+#r = flickr.photos_search(user_id='48439369@N00', per_page='10')
+#xml.etree.ElementTree.dump(r)

@@ -6,45 +6,88 @@
 import twitter
 import json
 import urllib
+import flickrapi
+import os
+import sys
+import random
+import urllib2
 
-CONSUMER_KEY = 'CiUUz9NABupYbIkPikPOI0UD7'
-CONSUMER_SECRET = 'uWlnaxYbpx78hxzBbple3JZD6wvGmVxSdLayRhImqK1MWVtJdi'
-OAUTH_TOKEN = '14630801-NQj7KzMd9bb97aBKpx4zzVj9KV0KPj8svj0HyJBse'
-OAUTH_TOKEN_SECRET = 'BClcN1uDSlELw3ZFdQ4FppMCfpHH99ptyRyy5t8IjpPS5'
 
-auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET)
-twitter_api = twitter.Twitter(auth=auth)
+url_template = 'http://farm%(farm_id)s.staticflickr.com/%(server_id)s/%(photo_id)s_%(secret)s.jpg'
 
-#print twitter_api
+def getTwitterTrends():
+    auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET)
+    twitter_api = twitter.Twitter(auth=auth)
 
-WORLD_WOE_ID = 1
-US_WOE_ID = 23424977
+    #print twitter_api
 
-world_trends = twitter_api.trends.place(_id=WORLD_WOE_ID)
-us_trends = twitter_api.trends.place(_id=US_WOE_ID)
+    WORLD_WOE_ID = 1
+    US_WOE_ID = 23424977
 
-print json.dumps(world_trends, indent=1)
-print 
-print json.dumps(us_trends, indent=1)
+    world_trends = twitter_api.trends.place(_id=WORLD_WOE_ID)
+    us_trends = twitter_api.trends.place(_id=US_WOE_ID)
 
-# intersection of trends
-world_trends_set = set([trend['name']
-                        for trend in world_trends[0]['trends']])
-us_trends_set = set([trend['name']
-                        for trend in us_trends[0]['trends']])                      
-common_trends = world_trends_set.intersection(us_trends_set)
+    print json.dumps(world_trends, indent=1)
+    print 
+    print json.dumps(us_trends, indent=1)
 
-print 'Common Trends**********************'
-print common_trends                        
+    # intersection of trends
+    world_trends_set = set([trend['name']
+                            for trend in world_trends[0]['trends']])
+    us_trends_set = set([trend['name']
+                            for trend in us_trends[0]['trends']])                      
+    common_trends = world_trends_set.intersection(us_trends_set)
+
+    print 'Common Trends**********************'
+    print common_trends                        
 
 def getImage():
     # gets this image - need to randomize which image it uses
-    urllib.urlretrieve( 'http://farm3.staticflickr.com/2903/14247445822_60c0f849e1_m.jpg', 'newImage/newImage.jpg')
+    #urllib.urlretrieve( 'http://farm3.staticflickr.com/2903/14247445822_60c0f849e1_m.jpg', 'newImage/newImage.jpg')
+    flickr = flickrapi.FlickrAPI(api_key, api_secret)
+    # Replace some of these call tags with some randomness
+    url =  url_for_photo(random.choice(flickr.photos_search(tags='Cool', per_page=2)[0]))
     
-#def main():
-#    print( 'main')
+    # Download the image:
+    filename = None
+    print 'Downloading %s' % url
+    filein = urllib2.urlopen(url)
+    try:
+        image = filein.read(5000000)
+    except MemoryError: # I sometimes get this exception. Why ?
+        return None
+        
+    filein.close()
+        # Check it.
+    if len(image)==0:
+        return None  # Sometimes flickr returns nothing.
+    if len(image)==5000000:
+        return None  # Image too big. Discard it.        
+    if image.startswith('GIF89a'):
+        return None # "This image is not available" image.
+    
+    # Save to disk.
+    if not filename:
+        filename = 'newImage/newImage.jpg' #url[url.rindex('/')+1:]
+    fileout = open(filename,'w+b')
+    fileout.write(image)
+    fileout.close()
+    
+    
+def url_for_photo(p):
+    return url_template % {
+        'server_id': p.get('server'),
+        'farm_id': p.get('farm'),
+        'photo_id': p.get('id'),
+        'secret': p.get('secret'),
+    }
+    
+    
+def main():
+    print( 'main')
+    getImage()
 
     
-#if __name__ == '__main__':
-#    main()
+if __name__ == '__main__':
+    main()
     

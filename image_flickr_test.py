@@ -33,9 +33,12 @@ def getInterestingFlickrImage(filename=None):
     print(url)
     
     # Extract images URLs from this page
-    re_imageurl = re.compile('src="(http://farm\d+.static.flickr.com/\d+/\d+_\w+_m.jpg)"',re.IGNORECASE|re.DOTALL)
+    re_imageurl = re.compile('src="(http://farm\d+.static.flickr.com/\d+/\d+_\w+_m.jpg)"',re.IGNORECASE|re.DOTALL)  
     
     urls = re_imageurl.findall(html)
+    
+    print(urls)
+    
     if len(urls)==0:
         raise ValueError,"Oops... could not find images URL in this page. Either Flickr has problem, or the website has changed."
     urls = [url.replace('_m.jpg','_o.jpg') for url in urls]
