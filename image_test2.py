@@ -5,7 +5,6 @@
     $ FLICKR_API_KEY=mykey ./flick.py tag1[,tag2,tag3...]
 '''
  
-# http://www.flickr.com/services/api/flickr.photos.search.html
 
 
  

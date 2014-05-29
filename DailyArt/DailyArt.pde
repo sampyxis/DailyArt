@@ -23,7 +23,7 @@ boolean smLines = false;
 boolean showTint = false;
 int loopNumLine = 0;
 int numOppLine = 100;
-
+int timeToRun = 10000;
 
 void setup(){
   //textsize(32);
@@ -44,7 +44,7 @@ void draw(){
   // Draw the original window
 //  imageFrame.draw();
 
-
+for(int i=0; i<timeToRun; i++) {
   int pixelIndex = ( x+ (y*img.width ));
   color c = img.pixels[pixelIndex];
   color(c,random(1,255));
@@ -91,7 +91,9 @@ drawCurves();
 
   // change the size
   pointCount = (int)random(1,5);
-
+} // timeToRun
+  save("/newImage/newImageChanged.jpg");
+  exit();
 }
 
 void drawSmallLines(){
@@ -167,8 +169,9 @@ void printText(String text, int locationX, int locationY) {
 
 // timestamp
 String timestamp() {
-  Calendar now = Calendar.getInstance();
-  return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", now);
+  //Calendar now = Calendar.getInstance();
+  //return String.format("%1$ty%1$tm%1$td_%1$tH%1$tM%1$tS", now);
+  return "";
 }
 
 void dailyRandom(){
