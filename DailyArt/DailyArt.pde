@@ -49,8 +49,8 @@ for(int i=0; i<timeToRun; i++) {
   color c = img.pixels[pixelIndex];
   color(c,random(1,255));
   // The last random function adds more thickness to the line
-  lineWeight = hue(c)/(int)random(30,50) * random(1,5);  
-  strokeWeight(lineWeight/2);
+  lineWeight = hue(c)/(int)random(30,50) * random(1,day()); // Day of the week for the random size was 5  
+  strokeWeight(lineWeight/month()); // month // was 2
   
   // Every 100 times - get the opposite color
   if( loopNum == numOpp) {
@@ -85,9 +85,18 @@ for(int i=0; i<timeToRun; i++) {
     }
   }
 
-drawLines();
-drawSmallLines();
-drawCurves();
+
+if((int)random(1,5) < 3){
+  drawLines();
+}
+if ((int)random(1,5) ==3) {
+  drawSmallLines();
+}
+if ((int)random(1,5) > 3) {
+  drawCurves();
+}
+
+//drawStraightLines();
 
   // change the size
   pointCount = (int)random(1,5);
@@ -159,8 +168,16 @@ void drawLines() {
     x = (int)random(0, width);
     y  = (int)random(0, height);
   }
-  
+   
 }
+
+void drawStraightLines() {
+  line(x,y, x+10, y+10);
+  x = x + 10;
+  y = y + 10;
+  loopNumLine =+10;
+}
+
 
 void printText(String text, int locationX, int locationY) {
   //text(text, locationX, locationY);

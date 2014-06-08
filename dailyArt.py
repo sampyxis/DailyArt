@@ -12,7 +12,16 @@ import sys
 import random
 import urllib2
 
+CONSUMER_KEY = 'xxxxxxxxxxxxxxx'
+CONSUMER_SECRET = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+OAUTH_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
+OAUTH_TOKEN_SECRET = 'xxxxxxxxxxxxxxxxxxxxxxxx'
 
+# Flickr Keys
+#api_key =  'xxxxxxxxxxxxxxxxxxxx'
+api_key = 'xxxxxxxxxxxxxxxxxxxxxx'
+#api_secret = 'xxxxxxxxxxxxxxxx'
+api_secret = 'xxxxxxxxxxxxxxxxxx'
 url_template = 'http://farm%(farm_id)s.staticflickr.com/%(server_id)s/%(photo_id)s_%(secret)s.jpg'
 
 def getTwitterTrends():
@@ -46,7 +55,7 @@ def getImage():
     #urllib.urlretrieve( 'http://farm3.staticflickr.com/2903/14247445822_60c0f849e1_m.jpg', 'newImage/newImage.jpg')
     flickr = flickrapi.FlickrAPI(api_key, api_secret)
     # Replace some of these call tags with some randomness
-    url =  url_for_photo(random.choice(flickr.photos_search(tags='Cool', per_page=2)[0]))
+    url =  url_for_photo(random.choice(flickr.photos_search(tags='totem', per_page=2)[0]))
     
     # Download the image:
     filename = None

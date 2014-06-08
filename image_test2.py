@@ -5,7 +5,11 @@
     $ FLICKR_API_KEY=mykey ./flick.py tag1[,tag2,tag3...]
 '''
  
-
+# Flickr Keys
+#api_key =  'xxxxxxxxxxxxxxxxxxxx'
+api_key = 'xxxxxxxxxxxxxxxxxxxxxx'
+#api_secret = 'xxxxxxxxxxxxxxxx'
+api_secret = 'xxxxxxxxxxxxxxxxxx'
 
  
 import flickrapi
