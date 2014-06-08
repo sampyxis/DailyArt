@@ -25,6 +25,15 @@ int loopNumLine = 0;
 int numOppLine = 100;
 int timeToRun = 10000;
 
+// Agents - not sure we'll keep
+// ------ agents ------
+Agent[] agents = new Agent[int(random(100,1000))];
+int agentsCount = 4000;
+float noiseScale = 100, noiseStrength = 10, noiseZRange = 0.4;
+float overlayAlpha = 10, agentsAlpha = 90, strokeWidth = 0.3;
+int drawMode = 1;
+// end Agents
+
 void setup(){
   //textsize(32);
   img = loadImage("../newImage/newImage.jpg");
@@ -33,6 +42,9 @@ void setup(){
   y = height/2;
   dailyRandom();  
   image(img,0,0);
+  
+  // Create the Agents
+  for(int i=0; i<agents.length; i++) agents[i] = new Agent();
 }
 
 void draw(){
@@ -41,9 +53,10 @@ void draw(){
   smooth();
   noFill();
   
-  // Draw the original window
+// Draw the original window
 //  imageFrame.draw();
 
+// How long to run for
 for(int i=0; i<timeToRun; i++) {
   int pixelIndex = ( x+ (y*img.width ));
   color c = img.pixels[pixelIndex];
@@ -96,14 +109,53 @@ if ((int)random(1,5) > 3) {
   drawCurves();
 }
 
-//drawStraightLines();
-
   // change the size
   pointCount = (int)random(1,5);
 } // timeToRun
+
+// This loop is all new - I really like this - but maybe I'll use it for the hourly pic instead
+// Now loop another x times and draw straight lines on top
+// takes the last used color - ok?
+//for(int j = 0; j < int(random(1000,200000)); j++){
+//  drawStraightLines();
+//  pointCount = (int)random(1,5);
+//}
+
+// Now that the initial image is done - run the Agents!
+// Which type
+int type = int(random(1,2));
+int time_to_run = int(random(10,200));
+for(int j = 0; j < time_to_run; j++){ 
+  if(type ==1) {
+  for(int i=0; i<agents.length; i++) 
+    agents[i].update1();
+    int pixelIndex = ( x+ (y*img.width ));
+  color c = img.pixels[pixelIndex];
+  color(c,random(1,255)); 
+  stroke(color(c,random(1,255)));
+    pointCount = (int)random(1,5);
+    x = (int)random(0, width);
+    y  = (int)random(0, height);
+  } 
+  else {
+    for(int i=0; i<agentsCount; i++) 
+        agents[i].update2();
+      int pixelIndex = ( x+ (y*img.width ));
+  color c = img.pixels[pixelIndex];
+  color(c,random(1,255));
+ stroke(color(c,random(1,255))); 
+    pointCount = (int)random(1,5);
+    x = (int)random(0, width);
+    y  = (int)random(0, height);
+  } 
+
+}
+
   save("/newImage/newImageChanged.jpg");
   exit();
 }
+
+
 
 void drawSmallLines(){
   strokeWeight(random(.1,3));
@@ -172,10 +224,10 @@ void drawLines() {
 }
 
 void drawStraightLines() {
-  line(x,y, x+10, y+10);
-  x = x + 10;
-  y = y + 10;
-  loopNumLine =+10;
+    line(x, y, x+ random(3,30), y+ random(3,30));
+    loopNumLine = loopNumLine + (int)random(-1,5);
+    x = (int)random(0, width);
+    y  = (int)random(0, height);
 }
 
 
@@ -193,4 +245,5 @@ String timestamp() {
 
 void dailyRandom(){
   // Here we will change the values depending on external info
+  timeToRun = int(random(10000, 200000)); // This needs to be random
 }

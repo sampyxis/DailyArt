@@ -11,18 +11,14 @@ import os
 import sys
 import random
 import urllib2
+import smtplib
 
-CONSUMER_KEY = 'xxxxxxxxxxxxxxx'
-CONSUMER_SECRET = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-OAUTH_TOKEN = 'xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx'
-OAUTH_TOKEN_SECRET = 'xxxxxxxxxxxxxxxxxxxxxxxx'
+# Here are the email package modules we'll need
+from email.mime.image import MIMEImage
+from email.mime.multipart import MIMEMultipart
 
-# Flickr Keys
-#api_key =  'xxxxxxxxxxxxxxxxxxxx'
-api_key = 'xxxxxxxxxxxxxxxxxxxxxx'
-#api_secret = 'xxxxxxxxxxxxxxxx'
-api_secret = 'xxxxxxxxxxxxxxxxxx'
-url_template = 'http://farm%(farm_id)s.staticflickr.com/%(server_id)s/%(photo_id)s_%(secret)s.jpg'
+
+
 
 def getTwitterTrends():
     auth = twitter.oauth.OAuth(OAUTH_TOKEN, OAUTH_TOKEN_SECRET, CONSUMER_KEY, CONSUMER_SECRET)
@@ -55,7 +51,7 @@ def getImage():
     #urllib.urlretrieve( 'http://farm3.staticflickr.com/2903/14247445822_60c0f849e1_m.jpg', 'newImage/newImage.jpg')
     flickr = flickrapi.FlickrAPI(api_key, api_secret)
     # Replace some of these call tags with some randomness
-    url =  url_for_photo(random.choice(flickr.photos_search(tags='totem', per_page=2)[0]))
+    url =  url_for_photo(random.choice(flickr.photos_search(tags='contestation', per_page=2)[0]))
     
     # Download the image:
     filename = None
@@ -81,6 +77,47 @@ def getImage():
     fileout = open(filename,'w+b')
     fileout.write(image)
     fileout.close()
+    
+    #now - kick off the processing job
+    # need to change director for the local server - will put into a yaml file
+    os.system("processing-java --sketch=..\..\..\..\GitHub\DailyArt\DailyArt --output=..\..\..\..\GitHub\DailyArt\DailyArtBuild --force --run")
+    
+    # now send the email to Tumblr
+    # email set up
+    server = smtplib.SMTP('smtp.gmail.com:587')
+    server.ehlo()
+    server.starttls()
+
+    #Next, log in to the server
+    server.login(user_name, user_pass)
+
+    #Send the mail
+    #msg = "\nHello!" # The /n separates the message from the headers
+    #server.sendmail("you@gmail.com", "target@example.com", msg)
+    # Create the container (outer) email message.
+   
+    msg = MIMEMultipart()
+    msg['Subject'] = 'DailyArt Post'
+    me = "sampyxis@gmail.com"
+    msg['From'] = me
+    msg['To'] = tumblr_email
+    msg.preamble = '#dailyart #generative #generativeart' 
+
+    img = MIMEImage(open('DailyArt/newImage/newImageChanged.jpg',"rb").read(), _subtype="jpeg")
+    img.add_header('Content-Disposition', 'attachment; filename="newImageChanged.jpg"')
+    msg.attach(img)
+    
+    # Assume we know that the image files are all in PNG format
+    #filename = 'DailyArt/newImage/newImageChanged.jpg';
+    #fp = open(filename, 'rb')
+    #img = MIMEImage(fp.read(), 'jpeg')
+    #fp.close()
+    #msg.attach(img)
+    
+    # Send the email via our own SMTP server.
+    #s = smtplib.SMTP('localhost')
+    server.sendmail(me, tumblr_email, msg.as_string())
+    server.quit()    
     
     
 def url_for_photo(p):
